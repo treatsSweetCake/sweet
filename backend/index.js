@@ -122,6 +122,7 @@ app.post('/signup', async (req, res) => {
 			email,
 			password: hashedPassword,
 		});
+
 		res.status(201).json({ message: 'Registration successful' });
 	} catch (error) {
 		console.error('Signup error:', error);
@@ -146,6 +147,9 @@ app.post('/signin', async (req, res) => {
 
 	res.cookie('user_token', token, {
   maxAge: 30 * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'Strict',
 });
 
 

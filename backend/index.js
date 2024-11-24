@@ -205,19 +205,23 @@ app.post('/addcard', upload.single('image'), async (req, res) => {
 });
 
 app.get('/cardsData', async (req, res) => {
-	try {
-		const cards = await Cards.find({}).lean();
-		const shuffledData = cards.sort(
-						() => Math.random() - 0.5
-					);
-		res.status(200).json({ shuffledData });
-	} catch (e) {
-		res.status(500).json({
-			message: 'Error fetching cards data',
-			error: e,
-		});
-	}
+    try {
+        const cards = await Cards.find({}).lean();
+        console.log('Fetched cards:', cards); 
+        if (!cards) {
+            throw new Error('No data found in Cards collection.');
+        }
+        const shuffledData = cards.sort(() => Math.random() - 0.5);
+        res.status(200).json({ shuffledData });
+    } catch (e) {
+        console.error('Error in /cardsData:', e);
+        res.status(500).json({
+            message: 'Error fetching cards data',
+            error: e.message,
+        });
+    }
 });
+
 
 app.delete('/deleteCard/:id', async (req, res) => {
 	try {

@@ -481,5 +481,5 @@ app.delete('/deleteCart/:createdBy/:product_id', async (req, res) => {
 });
 
 app.listen(port, () =>
-	console.log(`Server running on http://localhost:${port}`)
+	console.log(`Server is running on PORT: ${port}`)
 );

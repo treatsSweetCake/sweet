@@ -146,7 +146,7 @@ app.post('/signin', async (req, res) => {
 		}); 
 
 	res.cookie('user_token', token, {
-  httpOnly: true,
+  httpOnly: false,
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'Strict',
   maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -178,7 +178,7 @@ app.get('/checkauth', async (req, res) => {
 app.post('/logout', (req, res) => {
 	res.clearCookie('user_token',{
 		sameSite: 'Strict',
-   httpOnly: true,
+   httpOnly: false,
 process.env.NODE_ENV === 'production',
 	});
 	return res.status(200).json({ message: 'Logged out' });

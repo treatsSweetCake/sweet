@@ -146,9 +146,9 @@ app.post('/signin', async (req, res) => {
 		});
 
 		res.cookie('user_token', token, {
-			httpOnly: false,
+			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
-			sameSite: 'Strict',
+			sameSite: 'lax',
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 		});
 
@@ -176,9 +176,9 @@ app.get('/checkauth', async (req, res) => {
 
 app.post('/logout', (req, res) => {
 	res.clearCookie('user_token', {
-		sameSite: 'None',
-		httpOnly: false,
+		httpOnly: true,
 		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'lax',
 	});
 	return res.status(200).json({ message: 'Logged out' });
 });

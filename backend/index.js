@@ -144,12 +144,12 @@ app.post('/signin', async (req, res) => {
 			expiresIn: '30d',
 		}); 
 
-		res.cookie('user_token', token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-    maxAge: 30 * 24 * 60 * 60 * 1000, 
+	res.cookie('user_token', token, {
+  httpOnly: true,
+  sameSite: 'None',
+  maxAge: 30 * 24 * 60 * 60 * 1000,
 });
+
 
 		res.status(200).json({ user });
 	} catch (error) {

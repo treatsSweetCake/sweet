@@ -207,7 +207,10 @@ app.post('/addcard', upload.single('image'), async (req, res) => {
 app.get('/cardsData', async (req, res) => {
 	try {
 		const cards = await Cards.find({}).lean();
-		res.status(200).json({ cards });
+		const shuffledData = cards.sort(
+						() => Math.random() - 0.5
+					);
+		res.status(200).json({ shuffledData });
 	} catch (e) {
 		res.status(500).json({
 			message: 'Error fetching cards data',

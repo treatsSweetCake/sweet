@@ -179,7 +179,7 @@ app.post('/logout', (req, res) => {
 	res.clearCookie('user_token',{
 		sameSite: 'Strict',
    httpOnly: false,
-process.env.NODE_ENV === 'production',
+secure: process.env.NODE_ENV === 'production',
 	});
 	return res.status(200).json({ message: 'Logged out' });
 });

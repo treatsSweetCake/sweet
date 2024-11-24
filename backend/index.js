@@ -209,12 +209,12 @@ app.post('/addcard', upload.single('image'), async (req, res) => {
 app.get('/cardsData', async (req, res) => {
     try {
         const cards = await Cards.find({}).lean();
-        console.log('Fetched cards:', cards); 
+	    
         if (!cards) {
             throw new Error('No data found in Cards collection.');
         }
-        const shuffledData = cards.sort(() => Math.random() - 0.5);
-        res.status(200).json({ shuffledData });
+	    
+        res.status(200).json({ cards });
     } catch (e) {
         console.error('Error in /cardsData:', e);
         res.status(500).json({

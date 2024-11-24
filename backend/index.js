@@ -37,7 +37,9 @@ const upload = multer({ storage });
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use(cors({ origin: 'https://sweet-treats-bd.netlify.app', credentials: true }));
+app.use(
+	cors({ origin: 'https://sweet-treats-bd.netlify.app', credentials: true })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -83,10 +85,10 @@ app.post('/signup', async (req, res) => {
 			const transporter = Transporter();
 
 			const mailOptions = {
-    from: process.env.EMAIL,
-    to: email,
-    subject: 'OTP Verification - Your Sweet Access Code',
-    html: `
+				from: process.env.EMAIL,
+				to: email,
+				subject: 'OTP Verification - Your Sweet Access Code',
+				html: `
     <div style="font-family: 'Arial, sans-serif'; background-color: #fff5e6; color: #5a372d; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; border: 2px solid #e3cbb8; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
         <h1 style="text-align: center; font-size: 26px; margin-bottom: 20px; color: #d6634c;">🎂 Your Sweet Access Code 🎂</h1>
         <p style="font-size: 16px; line-height: 1.6; text-align: center; margin-bottom: 20px;">
@@ -104,8 +106,7 @@ app.post('/signup', async (req, res) => {
             <strong>— The Sweet Treats Team</strong>
         </p>
     </div>`,
-};
-
+			};
 
 			await transporter.sendMail(mailOptions);
 			return res.status(200).json({ message: 'OTP sent' });
@@ -115,7 +116,6 @@ app.post('/signup', async (req, res) => {
 		if (!otpDetails || otpDetails.otp !== otp)
 			return res.status(400).json({ message: 'Invalid or expired OTP' });
 
-	
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const newUser = await User.create({
 			username,
@@ -143,15 +143,14 @@ app.post('/signin', async (req, res) => {
 
 		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
 			expiresIn: '30d',
-		}); 
+		});
 
-	res.cookie('user_token', token, {
-  httpOnly: false,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'Strict',
-  maxAge: 30 * 24 * 60 * 60 * 1000,
-});
-
+		res.cookie('user_token', token, {
+			httpOnly: false,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'Strict',
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+		});
 
 		res.status(200).json({ user });
 	} catch (error) {
@@ -176,10 +175,10 @@ app.get('/checkauth', async (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-	res.clearCookie('user_token',{
-		sameSite: 'Strict',
-   httpOnly: false,
-secure: process.env.NODE_ENV === 'production',
+	res.clearCookie('user_token', {
+		sameSite: 'None',
+		httpOnly: false,
+		secure: process.env.NODE_ENV === 'production',
 	});
 	return res.status(200).json({ message: 'Logged out' });
 });
@@ -207,23 +206,22 @@ app.post('/addcard', upload.single('image'), async (req, res) => {
 });
 
 app.get('/cardsData', async (req, res) => {
-    try {
-        const cards = await Cards.find({}).lean();
-	    
-        if (!cards) {
-            throw new Error('No data found in Cards collection.');
-        }
-	    
-        res.status(200).json({ cards });
-    } catch (e) {
-        console.error('Error in /cardsData:', e);
-        res.status(500).json({
-            message: 'Error fetching cards data',
-            error: e.message,
-        });
-    }
-});
+	try {
+		const cards = await Cards.find({}).lean();
 
+		if (!cards) {
+			throw new Error('No data found in Cards collection.');
+		}
+
+		res.status(200).json({ cards });
+	} catch (e) {
+		console.error('Error in /cardsData:', e);
+		res.status(500).json({
+			message: 'Error fetching cards data',
+			error: e.message,
+		});
+	}
+});
 
 app.delete('/deleteCard/:id', async (req, res) => {
 	try {
@@ -480,6 +478,4 @@ app.delete('/deleteCart/:createdBy/:product_id', async (req, res) => {
 	}
 });
 
-app.listen(port, () =>
-	console.log(`Server is running on PORT: ${port}`)
-);
+app.listen(port, () => console.log(`Server is running on PORT: ${port}`));

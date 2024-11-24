@@ -83,11 +83,29 @@ app.post('/signup', async (req, res) => {
 			const transporter = Transporter();
 
 			const mailOptions = {
-				from: process.env.EMAIL,
-				to: email,
-				subject: 'OTP Verification - Your Sweet Access Code',
-				html: `OTP is: ${generateOTP}`,
-			};
+    from: process.env.EMAIL,
+    to: email,
+    subject: 'OTP Verification - Your Sweet Access Code',
+    html: `
+    <div style="font-family: 'Arial, sans-serif'; background-color: #fff5e6; color: #5a372d; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; border: 2px solid #e3cbb8; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+        <h1 style="text-align: center; font-size: 26px; margin-bottom: 20px; color: #d6634c;">🎂 Your Sweet Access Code 🎂</h1>
+        <p style="font-size: 16px; line-height: 1.6; text-align: center; margin-bottom: 20px;">
+            Hello! Here’s your one-time password (OTP) to verify your account. We hope this delightful email brightens your day:
+        </p>
+        <div style="background-color: #ffe0cc; padding: 15px; text-align: center; border-radius: 8px; font-size: 22px; font-weight: bold; color: #d6634c; border: 2px dashed #f3bfb0; margin: 20px 0;">
+            ${generateOTP}
+        </div>
+        <p style="text-align: center; font-size: 14px; color: #856049; margin-bottom: 20px;">
+            If you didn’t request this OTP, no worries! Just ignore this email.
+        </p>
+        <hr style="border: none; border-top: 1px solid #e3cbb8; margin: 20px 0;">
+        <p style="text-align: center; font-size: 14px; color: #856049;">
+            Thank you for trusting us. We hope your day is as sweet as cake!<br> 
+            <strong>— The Sweet Treats Team</strong>
+        </p>
+    </div>`,
+};
+
 
 			await transporter.sendMail(mailOptions);
 			return res.status(200).json({ message: 'OTP sent' });
@@ -97,7 +115,7 @@ app.post('/signup', async (req, res) => {
 		if (!otpDetails || otpDetails.otp !== otp)
 			return res.status(400).json({ message: 'Invalid or expired OTP' });
 
-		// Hashing password using bcryptjs
+	
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const newUser = await User.create({
 			username,
@@ -126,10 +144,11 @@ app.post('/signin', async (req, res) => {
 			expiresIn: '30d',
 		}); 
 
-		res.cookie('token', token, {
+		res.cookie('user_token', token, {
     httpOnly: true,
     secure: true,
-    sameSite: 'strict',
+    sameSite: 'None',
+    maxAge: 30 * 24 * 60 * 60 * 1000, 
 });
 
 		res.status(200).json({ user });
@@ -140,7 +159,7 @@ app.post('/signin', async (req, res) => {
 });
 
 app.get('/checkauth', async (req, res) => {
-	const token = req.cookies.token;
+	const token = req.cookies.user_token;
 	if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
 	try {
@@ -155,10 +174,10 @@ app.get('/checkauth', async (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-	res.clearCookie('token', {
+	res.clearCookie('user_token', {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === 'production',
-		sameSite: 'Strict',
+		secure: true,
+		sameSite: 'None',
 	});
 	return res.status(200).json({ message: 'Logged out' });
 });

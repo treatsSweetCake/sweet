@@ -149,7 +149,6 @@ app.post('/signin', async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: 'None',
-    domain: 'https://sweet-mix9.onrender.com',
     maxAge: 30 * 24 * 60 * 60 * 1000,
 });
 
@@ -180,7 +179,6 @@ app.post('/logout', (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: 'None',
-    domain: 'https://sweet-mix9.onrender.com',
     maxAge: 30 * 24 * 60 * 60 * 1000,
 });
 	return res.status(200).json({ message: 'Logged out' });
